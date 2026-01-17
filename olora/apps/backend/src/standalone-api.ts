@@ -72,7 +72,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Chat API - Real LLM Integration with Executor Intent Detection
+// Chat API - AI Agent Integration with Multi-Source Context
 app.post('/api/chat', async (req, res) => {
   try {
     const { message, conversationHistory } = req.body;
@@ -84,39 +84,6 @@ app.post('/api/chat', async (req, res) => {
       });
     }
 
-    // Step 1: Check for SAP Executor intent
-    let matchedExecutor = null;
-    try {
-      matchedExecutor = await executorService.matchExecutorWithAI(message, llmService);
-      console.log('Executor matching result:', matchedExecutor ? matchedExecutor.id : 'No match');
-    } catch (error) {
-      console.log('Executor matching failed (non-critical):', error.message);
-    }
-
-    // If executor is matched, return executor action card
-    if (matchedExecutor) {
-      return res.json({
-        success: true,
-        mode: llmService.isConfigured() ? 'production' : 'demo',
-        provider: llmService.getProviderName(),
-        timestamp: new Date().toISOString(),
-        // Executor-specific response
-        hasExecutor: true,
-        executor: {
-          id: matchedExecutor.id,
-          name: matchedExecutor.name,
-          description: matchedExecutor.description,
-          tcode: matchedExecutor.tcode,
-          api: matchedExecutor.api,
-          moduleId: matchedExecutor.moduleId,
-          moduleName: matchedExecutor.moduleName,
-          parameters: matchedExecutor.parameters,
-        },
-        message: `✨ 我理解您想要执行：**${matchedExecutor.name}**\n\n📋 操作详情：\n- T-Code: ${matchedExecutor.tcode}\n- BAPI: ${matchedExecutor.api}\n- 模块: ${matchedExecutor.moduleName}\n\n请点击下方的执行按钮，填写必需的参数后即可执行此操作。`,
-      });
-    }
-
-    // Step 2: No executor matched, proceed with normal chat
     // Check if LLM is configured
     if (!llmService.isConfigured()) {
       // Fallback to demo mode if not configured
@@ -131,27 +98,35 @@ app.post('/api/chat', async (req, res) => {
       });
     }
 
-    // Use real LLM
-    const response = await llmService.chat(message, conversationHistory || []);
+    // Use AI Agent to process conversation
+    // This includes:
+    // 1. Intent recognition + Executor matching
+    // 2. Multi-source context gathering (Knowledge base, Email, SAP)
+    // 3. Parameter extraction and conversion
+    // 4. Intelligent response generation
+    const agentService = require('./services/agent.service');
+    const agentResponse = await agentService.processConversation(
+      message,
+      conversationHistory || []
+    );
 
+    // Return agent response
     res.json({
-      success: true,
-      message: response,
+      ...agentResponse,
       mode: 'production',
       provider: llmService.getProviderName(),
-      hasExecutor: false,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error('Chat API error:', error);
 
-    // If LLM fails, fall back to demo mode
+    // If Agent fails, fall back to demo mode
     const fallbackResponse = generateResponse(req.body.message);
     res.json({
       success: true,
-      message: fallbackResponse + '\n\n⚠️ 注意：LLM 调用失败，已切换到演示模式。\n错误信息：' + error.message,
+      message: fallbackResponse + '\n\n⚠️ 注意：AI Agent 处理失败，已切换到演示模式。\n错误信息：' + error.message,
       mode: 'demo',
-      provider: 'Demo Mode (LLM 调用失败)',
+      provider: 'Demo Mode (Agent 失败)',
       hasExecutor: false,
       timestamp: new Date().toISOString(),
     });

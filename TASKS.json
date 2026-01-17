@@ -1,0 +1,391 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-01-17T23:05:00Z",
+  "parallel_mode": true,
+  "max_concurrent_tasks": 15,
+  "description": "并行开发任务清单 - 支持 1-15 个 Claude 实例同时工作",
+
+  "task_pools": {
+    "高优先级": {
+      "description": "生产环境必需功能,使用 Opus 4.5",
+      "tasks": [
+        {
+          "id": "T001",
+          "name": "SAP API 集成 - 项目创建",
+          "module": "executor.service.ts",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "opus-4.5",
+          "estimated_complexity": "high",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/modules/action/executor.service.ts"
+          ],
+          "requirements": [
+            "实现 createProject() 调用 BAPI_PROJECTDEF_CREATE",
+            "添加参数验证和错误处理",
+            "添加审计日志记录",
+            "编写单元测试"
+          ],
+          "success_criteria": [
+            "✅ 成功调用 SAP BAPI",
+            "✅ 单元测试通过",
+            "✅ 集成测试通过",
+            "✅ 错误处理完善"
+          ]
+        },
+        {
+          "id": "T002",
+          "name": "SAP API 集成 - WBS 创建",
+          "module": "executor.service.ts",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "opus-4.5",
+          "estimated_complexity": "high",
+          "dependencies": ["T001"],
+          "files": [
+            "olora/apps/backend/src/modules/action/executor.service.ts"
+          ],
+          "requirements": [
+            "实现 createWBS() 调用 BAPI_BUS2054_CREATE",
+            "添加 WBS 层级验证",
+            "实现依赖项目检查",
+            "编写单元测试"
+          ],
+          "success_criteria": [
+            "✅ 成功创建 WBS",
+            "✅ 层级关系正确",
+            "✅ 单元测试通过",
+            "✅ 集成测试通过"
+          ]
+        },
+        {
+          "id": "T003",
+          "name": "报表数据源 - PostgreSQL 集成",
+          "module": "report.service.js",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "opus-4.5",
+          "estimated_complexity": "high",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/services/report.service.js"
+          ],
+          "requirements": [
+            "从 PostgreSQL 读取历史财务数据",
+            "实现数据聚合和计算",
+            "添加缓存层 (Redis)",
+            "替换所有硬编码演示数据"
+          ],
+          "success_criteria": [
+            "✅ 所有报表从数据库读取真实数据",
+            "✅ 移除 _isDemoData 标记",
+            "✅ 缓存命中率 > 80%",
+            "✅ 响应时间 < 500ms"
+          ]
+        },
+        {
+          "id": "T004",
+          "name": "权限系统 - SAP Authorization 集成",
+          "module": "permission.service.ts",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "opus-4.5",
+          "estimated_complexity": "high",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/modules/action/permission.service.ts"
+          ],
+          "requirements": [
+            "调用 SAP Authorization API",
+            "实现权限对象验证",
+            "添加权限缓存 (Redis, 5分钟)",
+            "实现权限审计日志"
+          ],
+          "success_criteria": [
+            "✅ 真实的 SAP 权限验证",
+            "✅ 缓存命中率 > 90%",
+            "✅ 所有操作记录审计日志",
+            "✅ 单元测试通过"
+          ]
+        }
+      ]
+    },
+
+    "中优先级": {
+      "description": "核心功能增强,使用 Sonnet 4.5",
+      "tasks": [
+        {
+          "id": "T005",
+          "name": "前端 - 报表页面优化",
+          "module": "reports/page.tsx",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "sonnet-4.5",
+          "estimated_complexity": "medium",
+          "dependencies": ["T003"],
+          "files": [
+            "olora/apps/web/app/reports/page.tsx"
+          ],
+          "requirements": [
+            "接入真实报表数据 API",
+            "添加加载状态和错误处理",
+            "实现图表可视化 (Recharts)",
+            "添加导出功能 (Excel/PDF)"
+          ],
+          "success_criteria": [
+            "✅ 显示真实数据",
+            "✅ 图表正确渲染",
+            "✅ 导出功能正常",
+            "✅ E2E 测试通过"
+          ]
+        },
+        {
+          "id": "T006",
+          "name": "前端 - 知识库管理优化",
+          "module": "knowledge/page.tsx",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "sonnet-4.5",
+          "estimated_complexity": "medium",
+          "dependencies": [],
+          "files": [
+            "olora/apps/web/app/knowledge/page.tsx"
+          ],
+          "requirements": [
+            "实现文档上传和解析",
+            "添加向量化进度显示",
+            "实现文档搜索和预览",
+            "添加批量操作功能"
+          ],
+          "success_criteria": [
+            "✅ 上传功能正常",
+            "✅ 向量化成功",
+            "✅ 搜索结果准确",
+            "✅ E2E 测试通过"
+          ]
+        },
+        {
+          "id": "T007",
+          "name": "后端 - Redis 缓存实现",
+          "module": "cache.service.ts",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "sonnet-4.5",
+          "estimated_complexity": "medium",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/shared/cache/cache.service.ts"
+          ],
+          "requirements": [
+            "创建统一缓存服务",
+            "实现 TTL 管理",
+            "添加缓存失效策略",
+            "实现缓存统计"
+          ],
+          "success_criteria": [
+            "✅ 缓存读写正常",
+            "✅ TTL 正确过期",
+            "✅ 统计数据准确",
+            "✅ 单元测试通过"
+          ]
+        },
+        {
+          "id": "T008",
+          "name": "后端 - 审计日志完善",
+          "module": "audit.service.ts",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "sonnet-4.5",
+          "estimated_complexity": "medium",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/modules/audit/audit.service.ts"
+          ],
+          "requirements": [
+            "记录所有 SAP 操作",
+            "记录权限检查结果",
+            "实现审计日志查询 API",
+            "添加日志导出功能"
+          ],
+          "success_criteria": [
+            "✅ 所有操作被记录",
+            "✅ 查询 API 正常",
+            "✅ 导出功能正常",
+            "✅ 单元测试通过"
+          ]
+        }
+      ]
+    },
+
+    "低优先级": {
+      "description": "优化和增强,使用 Sonnet/Haiku",
+      "tasks": [
+        {
+          "id": "T009",
+          "name": "安全加固 - Rate Limiting",
+          "module": "security",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "sonnet-4.5",
+          "estimated_complexity": "low",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/shared/guards/rate-limit.guard.ts"
+          ],
+          "requirements": [
+            "实现 IP 级别限流",
+            "实现用户级别限流",
+            "添加限流统计",
+            "配置白名单"
+          ],
+          "success_criteria": [
+            "✅ 限流正常工作",
+            "✅ 白名单生效",
+            "✅ 单元测试通过"
+          ]
+        },
+        {
+          "id": "T010",
+          "name": "安全加固 - CSRF 保护",
+          "module": "security",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "haiku",
+          "estimated_complexity": "low",
+          "dependencies": [],
+          "files": [
+            "olora/apps/backend/src/main.ts"
+          ],
+          "requirements": [
+            "配置 csurf 中间件",
+            "添加 CSRF token 验证",
+            "前端集成 CSRF token"
+          ],
+          "success_criteria": [
+            "✅ CSRF 保护生效",
+            "✅ 前端请求正常",
+            "✅ E2E 测试通过"
+          ]
+        },
+        {
+          "id": "T011",
+          "name": "测试 - E2E 测试覆盖",
+          "module": "tests",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "sonnet-4.5",
+          "estimated_complexity": "medium",
+          "dependencies": [],
+          "files": [
+            "olora/apps/web/tests/e2e/**/*.e2e.ts"
+          ],
+          "requirements": [
+            "编写登录流程测试",
+            "编写对话流程测试",
+            "编写报表生成测试",
+            "编写知识库管理测试"
+          ],
+          "success_criteria": [
+            "✅ 测试覆盖率 > 80%",
+            "✅ 所有关键流程有测试",
+            "✅ 所有测试通过"
+          ]
+        },
+        {
+          "id": "T012",
+          "name": "文档 - API 文档完善",
+          "module": "docs",
+          "status": "pending",
+          "assigned_to": null,
+          "model": "haiku",
+          "estimated_complexity": "low",
+          "dependencies": [],
+          "files": [
+            "docs/guides/api.md"
+          ],
+          "requirements": [
+            "完善 Swagger 注释",
+            "添加请求示例",
+            "添加响应示例",
+            "添加错误码说明"
+          ],
+          "success_criteria": [
+            "✅ Swagger UI 完整",
+            "✅ 所有接口有文档",
+            "✅ 示例可运行"
+          ]
+        }
+      ]
+    },
+
+    "测试任务": {
+      "description": "持续测试和验证,可并行执行",
+      "tasks": [
+        {
+          "id": "T-TEST-01",
+          "name": "持续集成 - 单元测试",
+          "status": "recurring",
+          "assigned_to": null,
+          "model": "haiku",
+          "command": "pnpm test",
+          "schedule": "每次代码提交前"
+        },
+        {
+          "id": "T-TEST-02",
+          "name": "持续集成 - E2E 测试",
+          "status": "recurring",
+          "assigned_to": null,
+          "model": "haiku",
+          "command": "pnpm test:e2e",
+          "schedule": "每天夜间"
+        },
+        {
+          "id": "T-TEST-03",
+          "name": "代码质量检查",
+          "status": "recurring",
+          "assigned_to": null,
+          "model": "haiku",
+          "command": "pnpm lint && pnpm format",
+          "schedule": "每次代码提交前"
+        },
+        {
+          "id": "T-TEST-04",
+          "name": "构建验证",
+          "status": "recurring",
+          "assigned_to": null,
+          "model": "haiku",
+          "command": "pnpm build",
+          "schedule": "每次合并到 main 分支"
+        }
+      ]
+    }
+  },
+
+  "task_assignment_rules": {
+    "max_tasks_per_instance": 1,
+    "auto_assign": false,
+    "priority_order": ["高优先级", "中优先级", "低优先级"],
+    "model_preference": {
+      "high_complexity": "opus-4.5",
+      "medium_complexity": "sonnet-4.5",
+      "low_complexity": "haiku"
+    }
+  },
+
+  "completion_tracking": {
+    "total_tasks": 16,
+    "completed_tasks": 0,
+    "in_progress_tasks": 0,
+    "pending_tasks": 16,
+    "completion_rate": "0%"
+  },
+
+  "workflow_config": {
+    "require_tests": true,
+    "require_documentation": true,
+    "require_code_review": false,
+    "auto_commit": false,
+    "auto_push": false
+  }
+}

@@ -11,10 +11,10 @@
 | 严重等级 | 未修复 | 已修复 | 总数 |
 |---------|--------|--------|------|
 | P0 - Blocker | 0 | 0 | 0 |
-| P1 - Critical | 0 | 0 | 0 |
-| P2 - Major | 0 | 0 | 0 |
+| P1 - Critical | 1 | 0 | 1 |
+| P2 - Major | 2 | 0 | 2 |
 | P3 - Minor | 0 | 0 | 0 |
-| **总计** | **0** | **0** | **0** |
+| **总计** | **3** | **0** | **3** |
 
 ---
 
@@ -43,6 +43,178 @@
 ## P0 - Blocker 级别 Bug
 
 > 系统崩溃、数据丢失、核心功能完全不可用
+
+_(暂无 P0 级别 Bug)_
+
+---
+
+## P1 - Critical 级别 Bug
+
+> 主要功能异常、数据错误、严重影响用户使用
+
+### BUG-P1-001: 审计日志API未实现
+- **严重等级**: P1
+- **状态**: ❌ Open
+- **发现时间**: 2026-01-17 22:01
+- **发现于**: 测试审计日志功能
+- **影响范围**: 审计日志功能完全不可用
+
+- **复现步骤**:
+  1. 访问 `GET /api/audit/logs`
+  2. 返回 404 错误
+
+- **预期行为**: 返回审计日志列表
+- **实际行为**: 404 Not Found - "Cannot GET /api/audit/logs"
+
+- **错误信息**:
+  ```html
+  Cannot GET /api/audit/logs
+  ```
+
+- **根本原因**:
+  - 审计日志模块未实现
+  - 或路由未正确配置
+
+- **修复方案**:
+  1. 在后端创建 AuditModule
+  2. 实现 AuditController 和 AuditService
+  3. 添加路由 `GET /api/audit/logs`
+  4. 实现日志查询逻辑
+
+- **修复代码**:
+  ```typescript
+  // apps/backend/src/modules/audit/audit.controller.ts
+  @Controller('api/audit')
+  export class AuditController {
+    @Get('logs')
+    async getLogs(@Query() query: AuditQueryDto) {
+      return this.auditService.getLogs(query);
+    }
+  }
+  ```
+
+- **修复人**: 待分配
+- **修复时间**: 待修复
+- **验证结果**: 待验证
+- **关联测试用例**: TC-AUDIT-001
+
+---
+
+## P2 - Major 级别 Bug
+
+> 次要功能异常、体验问题、不影响核心流程
+
+### BUG-P2-001: 后端健康检查端点未实现
+- **严重等级**: P2
+- **状态**: ❌ Open
+- **发现时间**: 2026-01-17 21:54
+- **发现于**: 系统环境检查
+- **影响范围**: 无法使用标准健康检查监控服务
+
+- **复现步骤**:
+  1. 访问 `GET /api/health`
+  2. 返回 404 错误
+
+- **预期行为**: 返回服务健康状态
+- **实际行为**: 404 Not Found
+
+- **根本原因**: AppController 中未实现 /health 端点
+
+- **修复方案**:
+  在 AppController 中添加健康检查端点
+
+- **修复代码**:
+  ```typescript
+  // apps/backend/src/app.controller.ts
+  @Get('health')
+  getHealth() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'OLORA Backend',
+      version: '1.0.0'
+    };
+  }
+  ```
+
+- **修复人**: 待分配
+- **修复时间**: 待修复
+- **验证结果**: 待验证
+
+---
+
+### BUG-P2-002: Swagger文档无法访问
+- **严重等级**: P2
+- **状态**: ❌ Open
+- **发现时间**: 2026-01-17 21:54
+- **发现于**: API文档访问测试
+- **影响范围**: 开发者无法查看API文档
+
+- **复现步骤**:
+  1. 访问 `GET /api/docs`
+  2. 返回 404 错误
+
+- **预期行为**: 显示Swagger UI文档页面
+- **实际行为**: 404 Not Found
+
+- **根本原因**:
+  - Swagger配置路径错误
+  - 或Swagger模块未正确加载
+
+- **修复方案**:
+  1. 检查 main.ts 中 Swagger 配置
+  2. 确保路径为 'api/docs'
+  3. 验证 @nestjs/swagger 依赖安装
+
+- **修复代码**:
+  ```typescript
+  // apps/backend/src/main.ts
+  const config = new DocumentBuilder()
+    .setTitle('OLORA API')
+    .setDescription('SAP AI Agent API Documentation')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+  ```
+
+- **修复人**: 待分配
+- **修复时间**: 待修复
+- **验证结果**: 待验证
+
+---
+
+### BUG-P2-003: 报表API未实现
+- **严重等级**: P2
+- **状态**: ❌ Open
+- **发现时间**: 2026-01-17 22:00
+- **发现于**: 报表功能测试
+- **影响范围**: 报表生成功能不可用
+
+- **复现步骤**:
+  1. 访问 `GET /api/reports/sales-overview`
+  2. 返回 404 错误
+
+- **预期行为**: 返回销售概览报表数据
+- **实际行为**: 404 Not Found
+
+- **根本原因**: 报表模块未实现
+
+- **修复方案**:
+  1. 创建 ReportModule
+  2. 实现报表生成逻辑
+  3. 添加路由
+
+- **修复人**: 待分配
+- **修复时间**: 待修复
+- **验证结果**: 待验证
+
+---
+
+## P3 - Minor 级别 Bug
+
+> UI 细节、文案错误、小的体验优化
 
 ### BUG-P0-001: [示例] 系统启动失败
 - **严重等级**: P0

@@ -215,6 +215,20 @@ ${executorsList}
   }
 
   /**
+   * Get all executors as an array
+   */
+  getAllExecutors() {
+    return Array.from(this.executorsMap.values());
+  }
+
+  /**
+   * Get all modules
+   */
+  getModules() {
+    return this.modules;
+  }
+
+  /**
    * Get statistics
    */
   getStats() {
