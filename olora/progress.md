@@ -108,8 +108,102 @@ LLMFactory (Provider 工厂)
 └── GeminiProvider (implements BaseLLMProvider)
 ```
 
-**Git 提交**: 待提交
+**Git 提交**: `7cffee7`
 
 **下一步**: F001 - 项目初始化与 Monorepo 搭建
+
+---
+
+## [2026-01-17 18:40] - Session 3 - F001: 项目初始化与 Monorepo 搭建
+
+**阶段**: Phase 1 - 基础框架
+
+**实现功能**: F001 - 项目初始化与 Monorepo 搭建
+
+**修改内容**:
+1. 根目录配置文件
+   - `pnpm-workspace.yaml`: pnpm workspace 配置
+   - `turbo.json`: Turborepo 构建配置
+   - `.eslintrc.js`: ESLint 规则
+   - `.prettierrc`: 代码格式化配置
+   - `package.json`: 根目录依赖和脚本
+   - `docker-dev.sh`: Docker 开发环境启动脚本
+
+2. 后端 (apps/backend)
+   - `src/main.ts`: NestJS 应用入口
+   - `src/app.module.ts`: 应用根模块
+   - `src/app.controller.ts`: 健康检查控制器
+   - `src/app.service.ts`: 应用服务
+   - `tsconfig.json`: TypeScript 配置
+   - `nest-cli.json`: Nest CLI 配置
+
+3. 前端 (apps/web)
+   - `app/layout.tsx`: Next.js 布局文件
+   - `app/page.tsx`: 首页组件
+   - `app/globals.css`: 全局样式
+   - `next.config.js`: Next.js 配置
+   - `tsconfig.json`: TypeScript 配置
+   - `package.json`: 修改端口为 3001
+
+4. Docker 环境
+   - PostgreSQL: localhost:5432 ✅
+   - Qdrant: localhost:6333 ✅
+   - Redis: 使用本地 Redis (6379 端口已占用)
+
+**测试结果**:
+- ✅ F001-B1: 后端启动成功，监听 3000 端口
+- ✅ F001-B2: GET /api/health 返回 200 OK
+```json
+{
+  "status": "ok",
+  "timestamp": "2026-01-17T17:40:53.862Z",
+  "uptime": 38.827425167,
+  "environment": "development"
+}
+```
+- ✅ F001-F1: 前端配置完成，端口 3001
+- ✅ F001-F2: 首页包含 OLORA 标题
+- ✅ F001-I1: Turbo配置就绪，支持 `pnpm dev` 并行启动
+
+**项目结构**:
+```
+olora/
+├── .eslintrc.js
+├── .prettierrc
+├── package.json
+├── pnpm-workspace.yaml
+├── turbo.json
+├── docker-compose.yml
+├── docker-dev.sh
+├── apps/
+│   ├── backend/           # NestJS 10 后端
+│   │   ├── src/
+│   │   │   ├── main.ts
+│   │   │   ├── app.module.ts
+│   │   │   ├── app.controller.ts
+│   │   │   └── app.service.ts
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── nest-cli.json
+│   └── web/               # Next.js 14 前端
+│       ├── app/
+│       │   ├── layout.tsx
+│       │   ├── page.tsx
+│       │   └── globals.css
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── next.config.js
+└── node_modules/          # 1096 packages installed
+```
+
+**技术亮点**:
+- **Monorepo 架构**: pnpm workspace + Turborepo，支持并行构建和缓存
+- **类型安全**: 全栈 TypeScript 5
+- **开发体验**: 一条命令 (`pnpm dev`) 启动前后端
+- **容器化**: Docker Compose 管理数据库服务
+
+**Git 提交**: 待提交
+
+**下一步**: F002 - 数据库设计与 Prisma 集成
 
 ---

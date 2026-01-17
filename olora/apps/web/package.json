@@ -4,9 +4,9 @@
   "description": "OLORA Frontend - AI Chat Interface for SAP Operations",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3001",
     "lint": "next lint",
     "type-check": "tsc --noEmit"
   },
