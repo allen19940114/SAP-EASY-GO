@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
+import { API_ENDPOINTS } from '@/config/env';
 
 export default function SettingsPage() {
   const [llmConfig, setLlmConfig] = useState({
@@ -19,8 +20,51 @@ export default function SettingsPage() {
     embeddingModel: 'text-embedding-ada-002',
   });
 
-  const handleSave = () => {
-    alert('配置已保存！\n\n注意：保存后需要重启后端服务才能生效。\n\n配置文件路径：apps/backend/.env');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.settings.get());
+      const data = await response.json();
+      if (data.success && data.config) {
+        setLlmConfig(data.config.llm);
+        setQdrantConfig(data.config.qdrant);
+      }
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(API_ENDPOINTS.settings.update(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          llm: llmConfig,
+          qdrant: qdrantConfig,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('✅ 配置已成功保存到 .env 文件！\n\n⚠️ 重要提示：\n配置已持久化保存，但需要重启后端服务才能生效。\n\n重启命令：\n1. 停止后端: lsof -ti:3002 | xargs kill\n2. 启动后端: cd apps/backend && node src/standalone-api.ts');
+      } else {
+        alert('❌ 保存失败: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('❌ 保存失败，请检查后端服务是否运行');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -266,21 +310,26 @@ export default function SettingsPage() {
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
           <button
             onClick={handleSave}
+            disabled={isSaving}
             style={{
-              background: '#1890ff',
+              background: isSaving ? '#d9d9d9' : '#1890ff',
               color: 'white',
               border: 'none',
               padding: '12px 32px',
               borderRadius: '8px',
               fontSize: '14px',
               fontWeight: 500,
-              cursor: 'pointer',
+              cursor: isSaving ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.background = '#096dd9'}
-            onMouseLeave={(e) => e.currentTarget.style.background = '#1890ff'}
+            onMouseEnter={(e) => {
+              if (!isSaving) e.currentTarget.style.background = '#096dd9';
+            }}
+            onMouseLeave={(e) => {
+              if (!isSaving) e.currentTarget.style.background = '#1890ff';
+            }}
           >
-            💾 保存配置
+            {isSaving ? '💾 保存中...' : '💾 保存配置'}
           </button>
         </div>
 

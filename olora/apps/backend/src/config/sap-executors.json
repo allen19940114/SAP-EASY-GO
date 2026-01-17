@@ -1,0 +1,384 @@
+{
+  "modules": [
+    {
+      "id": "MM",
+      "name": "物料管理 (MM - Material Management)",
+      "icon": "📦",
+      "description": "采购、库存、供应商管理",
+      "executors": [
+        {
+          "id": "MM_PO_CREATE",
+          "name": "创建采购订单",
+          "description": "创建标准采购订单 (ME21N)",
+          "tcode": "ME21N",
+          "api": "BAPI_PO_CREATE1",
+          "method": "POST",
+          "keywords": ["创建采购订单", "下采购单", "采购", "PO", "purchase order"],
+          "parameters": [
+            {
+              "name": "supplier",
+              "label": "供应商代码",
+              "type": "string",
+              "required": true,
+              "description": "供应商编号"
+            },
+            {
+              "name": "purchaseOrg",
+              "label": "采购组织",
+              "type": "string",
+              "required": true,
+              "default": "1000"
+            },
+            {
+              "name": "purchaseGroup",
+              "label": "采购组",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "items",
+              "label": "采购项目",
+              "type": "array",
+              "required": true,
+              "schema": {
+                "material": "物料号",
+                "quantity": "数量",
+                "price": "单价",
+                "deliveryDate": "交货日期",
+                "plant": "工厂"
+              }
+            }
+          ]
+        },
+        {
+          "id": "MM_PO_DISPLAY",
+          "name": "显示采购订单",
+          "description": "查看采购订单详情 (ME23N)",
+          "tcode": "ME23N",
+          "api": "BAPI_PO_GETDETAIL",
+          "method": "GET",
+          "keywords": ["查看采购订单", "采购订单详情", "显示PO"],
+          "parameters": [
+            {
+              "name": "poNumber",
+              "label": "采购订单号",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "MM_GR_POST",
+          "name": "货物收货",
+          "description": "货物收货过账 (MIGO)",
+          "tcode": "MIGO",
+          "api": "BAPI_GOODSMVT_CREATE",
+          "method": "POST",
+          "keywords": ["收货", "货物入库", "GR", "goods receipt"],
+          "parameters": [
+            {
+              "name": "poNumber",
+              "label": "采购订单号",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "items",
+              "label": "收货项目",
+              "type": "array",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "MM_VENDOR_CREATE",
+          "name": "创建供应商",
+          "description": "创建供应商主数据 (MK01)",
+          "tcode": "MK01",
+          "api": "BAPI_VENDOR_CREATE",
+          "method": "POST",
+          "keywords": ["创建供应商", "新建供应商", "供应商主数据"],
+          "parameters": [
+            {
+              "name": "vendorName",
+              "label": "供应商名称",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "country",
+              "label": "国家",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "address",
+              "label": "地址",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "SD",
+      "name": "销售与分销 (SD - Sales & Distribution)",
+      "icon": "🛒",
+      "description": "销售订单、发货、开票",
+      "executors": [
+        {
+          "id": "SD_SO_CREATE",
+          "name": "创建销售订单",
+          "description": "创建标准销售订单 (VA01)",
+          "tcode": "VA01",
+          "api": "BAPI_SALESORDER_CREATE",
+          "method": "POST",
+          "keywords": ["创建销售订单", "下销售单", "SO", "sales order"],
+          "parameters": [
+            {
+              "name": "customer",
+              "label": "客户代码",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "salesOrg",
+              "label": "销售组织",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "items",
+              "label": "订单项目",
+              "type": "array",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "SD_DELIVERY_CREATE",
+          "name": "创建交货单",
+          "description": "创建外向交货单 (VL01N)",
+          "tcode": "VL01N",
+          "api": "BAPI_OUTB_DELIVERY_CREATE",
+          "method": "POST",
+          "keywords": ["创建交货单", "发货", "delivery"],
+          "parameters": [
+            {
+              "name": "salesOrder",
+              "label": "销售订单号",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "SD_INVOICE_CREATE",
+          "name": "创建销售发票",
+          "description": "创建销售发票 (VF01)",
+          "tcode": "VF01",
+          "api": "BAPI_BILLINGDOC_CREATE",
+          "method": "POST",
+          "keywords": ["创建发票", "开票", "invoice"],
+          "parameters": [
+            {
+              "name": "delivery",
+              "label": "交货单号",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FI",
+      "name": "财务会计 (FI - Financial Accounting)",
+      "icon": "💰",
+      "description": "总账、应收应付、资产管理",
+      "executors": [
+        {
+          "id": "FI_GL_POST",
+          "name": "总账过账",
+          "description": "总账凭证过账 (FB01)",
+          "tcode": "FB01",
+          "api": "BAPI_ACC_DOCUMENT_POST",
+          "method": "POST",
+          "keywords": ["总账过账", "记账凭证", "GL posting"],
+          "parameters": [
+            {
+              "name": "companyCode",
+              "label": "公司代码",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "documentDate",
+              "label": "凭证日期",
+              "type": "date",
+              "required": true
+            },
+            {
+              "name": "items",
+              "label": "凭证行项目",
+              "type": "array",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "FI_AP_POST",
+          "name": "应付账款过账",
+          "description": "供应商发票过账 (FB60)",
+          "tcode": "FB60",
+          "api": "BAPI_ACC_INVOICE_POST",
+          "method": "POST",
+          "keywords": ["应付账款", "供应商发票", "AP invoice"],
+          "parameters": [
+            {
+              "name": "vendor",
+              "label": "供应商代码",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "amount",
+              "label": "金额",
+              "type": "number",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "FI_AR_POST",
+          "name": "应收账款过账",
+          "description": "客户发票过账 (FB70)",
+          "tcode": "FB70",
+          "api": "BAPI_ACC_CUSTOMER_POST",
+          "method": "POST",
+          "keywords": ["应收账款", "客户发票", "AR invoice"],
+          "parameters": [
+            {
+              "name": "customer",
+              "label": "客户代码",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "amount",
+              "label": "金额",
+              "type": "number",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CO",
+      "name": "管理会计 (CO - Controlling)",
+      "icon": "📊",
+      "description": "成本中心、内部订单、利润中心",
+      "executors": [
+        {
+          "id": "CO_ORDER_CREATE",
+          "name": "创建内部订单",
+          "description": "创建内部订单 (KO01)",
+          "tcode": "KO01",
+          "api": "BAPI_INTERNALORDER_CREATE",
+          "method": "POST",
+          "keywords": ["创建内部订单", "内部订单", "internal order"],
+          "parameters": [
+            {
+              "name": "orderType",
+              "label": "订单类型",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "description",
+              "label": "订单描述",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PP",
+      "name": "生产计划 (PP - Production Planning)",
+      "icon": "🏭",
+      "description": "生产订单、工艺路线、BOM",
+      "executors": [
+        {
+          "id": "PP_ORDER_CREATE",
+          "name": "创建生产订单",
+          "description": "创建生产订单 (CO01)",
+          "tcode": "CO01",
+          "api": "BAPI_PRODORD_CREATE",
+          "method": "POST",
+          "keywords": ["创建生产订单", "生产单", "production order"],
+          "parameters": [
+            {
+              "name": "material",
+              "label": "成品物料号",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "quantity",
+              "label": "生产数量",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "plant",
+              "label": "工厂",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HR",
+      "name": "人力资源 (HR - Human Resources)",
+      "icon": "👥",
+      "description": "员工主数据、薪资、考勤",
+      "executors": [
+        {
+          "id": "HR_EMPLOYEE_CREATE",
+          "name": "创建员工",
+          "description": "创建员工主数据 (PA40)",
+          "tcode": "PA40",
+          "api": "BAPI_EMPLOYEE_CREATE",
+          "method": "POST",
+          "keywords": ["创建员工", "新建员工", "employee"],
+          "parameters": [
+            {
+              "name": "lastName",
+              "label": "姓",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "firstName",
+              "label": "名",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "hireDate",
+              "label": "入职日期",
+              "type": "date",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
