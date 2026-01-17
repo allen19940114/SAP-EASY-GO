@@ -58,3 +58,58 @@ olora/
 **下一步**: F001 - 项目初始化与 Monorepo 搭建
 
 ---
+
+## [2026-01-17 18:30] - Session 2 - LLM Provider 配置更新
+
+**阶段**: 架构调整
+
+**修改内容**:
+1. 更新 `.env.example`
+   - 移除 Claude 和 Azure 配置
+   - 新增 DeepSeek API 配置
+   - 新增 Google Gemini API 配置
+   - 支持三个 LLM Provider: OpenAI, DeepSeek, Gemini
+
+2. 更新 `feature_list.json` - F007 功能
+   - 功能名称: "LLM 集成 (OpenAI + DeepSeek + Gemini)"
+   - 新增 backend_files:
+     - `providers/base.provider.ts` (抽象基类)
+     - `providers/deepseek.provider.ts`
+     - `providers/gemini.provider.ts`
+     - `llm.factory.ts` (Provider 工厂)
+   - 新增 frontend_files:
+     - `ModelSelector.tsx` (模型选择器组件)
+   - 新增测试步骤:
+     - F007-B1: OpenAI Provider 测试
+     - F007-B2: DeepSeek Provider 测试
+     - F007-B3: Gemini Provider 测试
+     - F007-B4: 流式响应测试
+     - F007-B6: Provider 动态切换测试
+     - F007-F1: 前端模型选择器测试
+     - F007-I2: 切换模型保持上下文测试
+
+3. 更新架构文档
+   - `README.md`: 技术栈 LLM 部分
+   - `CLAUDE.md`: 后端技术栈说明
+
+**技术决策**:
+- **OpenAI GPT-4**: 综合能力最强，适合复杂任务
+- **DeepSeek**: 成本低，中文能力强，适合高频调用
+- **Google Gemini**: 多模态支持，长上下文（128K tokens）
+
+**LLM Provider 架构**:
+```
+LLMService (统一接口)
+    ↓
+LLMFactory (Provider 工厂)
+    ↓
+├── OpenAIProvider (implements BaseLLMProvider)
+├── DeepSeekProvider (implements BaseLLMProvider)
+└── GeminiProvider (implements BaseLLMProvider)
+```
+
+**Git 提交**: 待提交
+
+**下一步**: F001 - 项目初始化与 Monorepo 搭建
+
+---

@@ -35,7 +35,7 @@ OLORA adopts a five-layer architecture:
 - **Database**: PostgreSQL (Prisma ORM)
 - **Cache**: Redis
 - **Vector DB**: Qdrant (RAG)
-- **LLM**: OpenAI GPT-4 / Claude
+- **LLM**: OpenAI GPT-4 / DeepSeek / Google Gemini (支持动态切换)
 
 ### Frontend
 - **Framework**: Next.js 14 + React 18

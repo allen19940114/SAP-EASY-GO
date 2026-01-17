@@ -400,43 +400,80 @@
     },
     {
       "id": "F007",
-      "name": "LLM 集成 (OpenAI GPT-4)",
+      "name": "LLM 集成 (OpenAI + DeepSeek + Gemini)",
       "priority": 7,
       "phase": "Phase 2 - AI 对话与 RAG",
-      "description": "集成 OpenAI API，实现对话生成，流式响应",
+      "description": "集成多个 LLM Provider (OpenAI GPT-4, DeepSeek, Google Gemini)，实现对话生成，流式响应，支持动态切换",
       "implemented": false,
       "implementation_notes": "",
       "implemented_at": null,
       "backend_files": [
         "apps/backend/src/modules/llm/llm.service.ts",
         "apps/backend/src/modules/llm/llm.module.ts",
-        "apps/backend/src/modules/llm/providers/openai.provider.ts"
+        "apps/backend/src/modules/llm/providers/base.provider.ts",
+        "apps/backend/src/modules/llm/providers/openai.provider.ts",
+        "apps/backend/src/modules/llm/providers/deepseek.provider.ts",
+        "apps/backend/src/modules/llm/providers/gemini.provider.ts",
+        "apps/backend/src/modules/llm/llm.factory.ts"
       ],
-      "frontend_files": [],
+      "frontend_files": [
+        "apps/web/src/components/chat/ModelSelector.tsx"
+      ],
       "shared_files": [],
       "test_steps": {
         "backend_tests": [
           {
             "id": "F007-B1",
-            "description": "调用 OpenAI API 成功返回响应",
+            "description": "OpenAI Provider 调用成功",
             "passed": false
           },
           {
             "id": "F007-B2",
-            "description": "流式响应测试",
+            "description": "DeepSeek Provider 调用成功",
             "passed": false
           },
           {
             "id": "F007-B3",
+            "description": "Gemini Provider 调用成功",
+            "passed": false
+          },
+          {
+            "id": "F007-B4",
+            "description": "流式响应测试（所有 Provider）",
+            "passed": false
+          },
+          {
+            "id": "F007-B5",
             "description": "Token 使用量统计",
+            "passed": false
+          },
+          {
+            "id": "F007-B6",
+            "description": "Provider 动态切换测试",
             "passed": false
           }
         ],
-        "frontend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F007-F1",
+            "description": "模型选择器显示三个模型选项",
+            "passed": false
+          },
+          {
+            "id": "F007-F2",
+            "description": "切换模型后对话正常",
+            "passed": false
+          }
+        ],
         "integration_tests": [
           {
             "id": "F007-I1",
             "description": "用户发送消息 → LLM 生成回复 → 显示在对话",
+            "passed": false
+          },
+          {
+            "id": "F007-I2",
+            "description": "切换不同 Provider 对话保持上下文",
             "passed": false
           }
         ]

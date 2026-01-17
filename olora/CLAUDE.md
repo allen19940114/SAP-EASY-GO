@@ -33,7 +33,7 @@ UI组件: Shadcn/ui (基于 Radix UI)
 数据库: PostgreSQL 16 + Prisma ORM
 缓存: Redis 7.2 + ioredis
 向量数据库: Qdrant 1.7
-LLM: OpenAI GPT-4 / Claude
+LLM: OpenAI GPT-4 / DeepSeek / Google Gemini (支持动态切换)
 ```
 
 ### 开发工具链
