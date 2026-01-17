@@ -1,0 +1,1577 @@
+{
+  "project": "OLORA - SAP AI Agent",
+  "version": "1.0.0",
+  "last_updated": "2026-01-17",
+  "total_features": 32,
+  "completed_features": 0,
+  "features": [
+    {
+      "id": "F001",
+      "name": "项目初始化与 Monorepo 搭建",
+      "priority": 1,
+      "phase": "Phase 1 - 基础框架",
+      "description": "初始化 pnpm workspace + Turborepo，配置 ESLint、Prettier、Husky，创建 apps/backend 和 apps/web 目录结构",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/package.json",
+        "apps/backend/tsconfig.json",
+        "apps/backend/src/main.ts",
+        "apps/backend/src/app.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/package.json",
+        "apps/web/tsconfig.json",
+        "apps/web/next.config.js",
+        "apps/web/tailwind.config.ts"
+      ],
+      "shared_files": [
+        "pnpm-workspace.yaml",
+        "turbo.json",
+        ".eslintrc.js",
+        ".prettierrc",
+        ".husky/pre-commit"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F001-B1",
+            "description": "后端启动成功，监听 3000 端口",
+            "passed": false
+          },
+          {
+            "id": "F001-B2",
+            "description": "GET /api/health 返回 200",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F001-F1",
+            "description": "前端启动成功，访问 http://localhost:3001",
+            "passed": false
+          },
+          {
+            "id": "F001-F2",
+            "description": "首页显示 OLORA 标题",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F001-I1",
+            "description": "pnpm dev 同时启动前后端",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F002",
+      "name": "数据库设计与 Prisma 集成",
+      "priority": 2,
+      "phase": "Phase 1 - 基础框架",
+      "description": "创建 Prisma schema，定义所有数据模型，运行迁移，生成 Prisma Client",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/prisma/schema.prisma",
+        "apps/backend/prisma/migrations/",
+        "apps/backend/src/shared/prisma/prisma.service.ts",
+        "apps/backend/src/shared/prisma/prisma.module.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [
+        "docker-compose.yml"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F002-B1",
+            "description": "PostgreSQL 启动成功",
+            "passed": false
+          },
+          {
+            "id": "F002-B2",
+            "description": "Prisma migrate 执行成功",
+            "passed": false
+          },
+          {
+            "id": "F002-B3",
+            "description": "Prisma Client 生成成功",
+            "passed": false
+          },
+          {
+            "id": "F002-B4",
+            "description": "PrismaService 连接数据库成功",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F002-I1",
+            "description": "Prisma Studio 打开并显示所有表",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F003",
+      "name": "用户注册与登录 (JWT 认证)",
+      "priority": 3,
+      "phase": "Phase 1 - 基础框架",
+      "description": "实现用户注册、登录、JWT 生成与验证、Passport 集成",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/auth/auth.controller.ts",
+        "apps/backend/src/modules/auth/auth.service.ts",
+        "apps/backend/src/modules/auth/auth.module.ts",
+        "apps/backend/src/modules/auth/dto/register.dto.ts",
+        "apps/backend/src/modules/auth/dto/login.dto.ts",
+        "apps/backend/src/modules/auth/strategies/jwt.strategy.ts",
+        "apps/backend/src/modules/auth/guards/jwt-auth.guard.ts",
+        "apps/backend/src/modules/user/user.service.ts",
+        "apps/backend/src/modules/user/user.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(auth)/register/page.tsx",
+        "apps/web/src/app/(auth)/login/page.tsx",
+        "apps/web/src/components/ui/button.tsx",
+        "apps/web/src/components/ui/input.tsx",
+        "apps/web/src/stores/auth.store.ts",
+        "apps/web/src/lib/api-client.ts"
+      ],
+      "shared_files": [
+        "packages/types/src/user.types.ts",
+        "packages/types/src/auth.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F003-B1",
+            "description": "POST /api/auth/register 注册成功返回 201",
+            "passed": false
+          },
+          {
+            "id": "F003-B2",
+            "description": "重复邮箱注册返回 409 Conflict",
+            "passed": false
+          },
+          {
+            "id": "F003-B3",
+            "description": "POST /api/auth/login 登录成功返回 JWT",
+            "passed": false
+          },
+          {
+            "id": "F003-B4",
+            "description": "错误密码返回 401 Unauthorized",
+            "passed": false
+          },
+          {
+            "id": "F003-B5",
+            "description": "GET /api/users/me 带 JWT 返回用户信息",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F003-F1",
+            "description": "访问注册页面，填写表单提交成功",
+            "passed": false
+          },
+          {
+            "id": "F003-F2",
+            "description": "注册成功后跳转到登录页面",
+            "passed": false
+          },
+          {
+            "id": "F003-F3",
+            "description": "登录成功后跳转到对话页面 (/)",
+            "passed": false
+          },
+          {
+            "id": "F003-F4",
+            "description": "错误密码显示错误提示",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F003-I1",
+            "description": "完整流程: 注册 → 登录 → 获取用户信息",
+            "passed": false
+          },
+          {
+            "id": "F003-I2",
+            "description": "JWT token 存储在 localStorage",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F004",
+      "name": "SAP 账号绑定",
+      "priority": 4,
+      "phase": "Phase 1 - 基础框架",
+      "description": "用户绑定 SAP 账号，存储 SAP username、company code、plant 等信息",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/user/user.controller.ts",
+        "apps/backend/src/modules/user/dto/sap-binding.dto.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(dashboard)/settings/sap-binding/page.tsx",
+        "apps/web/src/components/sap/sap-binding-form.tsx"
+      ],
+      "shared_files": [
+        "packages/types/src/sap.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F004-B1",
+            "description": "POST /api/users/sap-binding 绑定成功",
+            "passed": false
+          },
+          {
+            "id": "F004-B2",
+            "description": "GET /api/users/sap-binding 获取绑定信息",
+            "passed": false
+          },
+          {
+            "id": "F004-B3",
+            "description": "DELETE /api/users/sap-binding 解绑成功",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F004-F1",
+            "description": "填写 SAP 绑定表单提交成功",
+            "passed": false
+          },
+          {
+            "id": "F004-F2",
+            "description": "绑定成功后显示 SAP 账号信息",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F004-I1",
+            "description": "绑定 → 查看 → 解绑 完整流程",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F005",
+      "name": "对话管理 (ChatSession & Message)",
+      "priority": 5,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "创建、列出、删除对话会话，发送消息，保存历史记录",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/chat/chat.controller.ts",
+        "apps/backend/src/modules/chat/chat.service.ts",
+        "apps/backend/src/modules/chat/chat.module.ts",
+        "apps/backend/src/modules/chat/dto/create-session.dto.ts",
+        "apps/backend/src/modules/chat/dto/send-message.dto.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(dashboard)/page.tsx",
+        "apps/web/src/components/chat/chat-window.tsx",
+        "apps/web/src/components/chat/message-list.tsx",
+        "apps/web/src/components/chat/input-box.tsx",
+        "apps/web/src/stores/chat.store.ts"
+      ],
+      "shared_files": [
+        "packages/types/src/chat.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F005-B1",
+            "description": "POST /api/chat/sessions 创建会话成功",
+            "passed": false
+          },
+          {
+            "id": "F005-B2",
+            "description": "GET /api/chat/sessions 列出所有会话",
+            "passed": false
+          },
+          {
+            "id": "F005-B3",
+            "description": "POST /api/chat/sessions/:id/messages 发送消息成功",
+            "passed": false
+          },
+          {
+            "id": "F005-B4",
+            "description": "GET /api/chat/sessions/:id 获取会话详情和消息列表",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F005-F1",
+            "description": "创建新会话，发送消息，显示在消息列表",
+            "passed": false
+          },
+          {
+            "id": "F005-F2",
+            "description": "切换会话，加载对应的消息历史",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F005-I1",
+            "description": "创建会话 → 发送多条消息 → 刷新页面 → 历史记录保留",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F006",
+      "name": "WebSocket 实时通信",
+      "priority": 6,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "实现 Socket.IO，支持实时消息推送、打字指示器",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/chat/chat.gateway.ts",
+        "apps/backend/src/modules/chat/chat.adapter.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/lib/socket-client.ts",
+        "apps/web/src/hooks/use-socket.ts"
+      ],
+      "shared_files": [
+        "packages/types/src/socket.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F006-B1",
+            "description": "WebSocket 连接成功",
+            "passed": false
+          },
+          {
+            "id": "F006-B2",
+            "description": "发送消息通过 Socket 实时推送",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F006-F1",
+            "description": "发送消息后立即显示在界面 (无需刷新)",
+            "passed": false
+          },
+          {
+            "id": "F006-F2",
+            "description": "AI 回复实时流式显示",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F006-I1",
+            "description": "WebSocket 断线重连测试",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F007",
+      "name": "LLM 集成 (OpenAI GPT-4)",
+      "priority": 7,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "集成 OpenAI API，实现对话生成，流式响应",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/llm/llm.service.ts",
+        "apps/backend/src/modules/llm/llm.module.ts",
+        "apps/backend/src/modules/llm/providers/openai.provider.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F007-B1",
+            "description": "调用 OpenAI API 成功返回响应",
+            "passed": false
+          },
+          {
+            "id": "F007-B2",
+            "description": "流式响应测试",
+            "passed": false
+          },
+          {
+            "id": "F007-B3",
+            "description": "Token 使用量统计",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F007-I1",
+            "description": "用户发送消息 → LLM 生成回复 → 显示在对话",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F008",
+      "name": "知识库文档上传",
+      "priority": 8,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "支持 PDF、Word、Excel、Markdown 文档上传，存储元数据",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/rag/document.controller.ts",
+        "apps/backend/src/modules/rag/document.service.ts",
+        "apps/backend/src/modules/rag/document.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(dashboard)/knowledge/page.tsx",
+        "apps/web/src/components/knowledge/upload-zone.tsx",
+        "apps/web/src/components/knowledge/document-list.tsx"
+      ],
+      "shared_files": [
+        "packages/types/src/document.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F008-B1",
+            "description": "POST /api/knowledge/documents 上传文件成功",
+            "passed": false
+          },
+          {
+            "id": "F008-B2",
+            "description": "GET /api/knowledge/documents 列出所有文档",
+            "passed": false
+          },
+          {
+            "id": "F008-B3",
+            "description": "DELETE /api/knowledge/documents/:id 删除文档",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F008-F1",
+            "description": "拖拽上传 PDF 文件成功",
+            "passed": false
+          },
+          {
+            "id": "F008-F2",
+            "description": "文档列表显示所有已上传文档",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F008-I1",
+            "description": "上传 → 列表显示 → 删除 完整流程",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F009",
+      "name": "文档解析与向量化 (Qdrant)",
+      "priority": 9,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "解析文档内容，分片 (chunk)，使用 OpenAI Embedding 向量化，存储到 Qdrant",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/rag/vectorstore.service.ts",
+        "apps/backend/src/modules/rag/embedding.service.ts",
+        "apps/backend/src/modules/rag/parser.service.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F009-B1",
+            "description": "PDF 解析成功提取文本",
+            "passed": false
+          },
+          {
+            "id": "F009-B2",
+            "description": "文本切片 (chunk_size=1024, overlap=200)",
+            "passed": false
+          },
+          {
+            "id": "F009-B3",
+            "description": "OpenAI Embedding 生成向量 (3072 维)",
+            "passed": false
+          },
+          {
+            "id": "F009-B4",
+            "description": "向量存储到 Qdrant 成功",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F009-I1",
+            "description": "上传文档 → 自动解析 → 向量化 → Qdrant 查询到数据",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F010",
+      "name": "知识库语义搜索 (RAG)",
+      "priority": 10,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "实现语义搜索，查询 Qdrant，返回相关文档片段和引用",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/rag/retrieval.service.ts",
+        "apps/backend/src/modules/rag/rag.service.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(dashboard)/knowledge/search/page.tsx",
+        "apps/web/src/components/knowledge/search-results.tsx"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F010-B1",
+            "description": "POST /api/knowledge/search 返回相关文档片段",
+            "passed": false
+          },
+          {
+            "id": "F010-B2",
+            "description": "搜索结果包含置信度分数",
+            "passed": false
+          },
+          {
+            "id": "F010-B3",
+            "description": "搜索结果包含引用来源 (文档名、页码)",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F010-F1",
+            "description": "输入查询，显示搜索结果",
+            "passed": false
+          },
+          {
+            "id": "F010-F2",
+            "description": "点击引用跳转到原文档",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F010-I1",
+            "description": "上传包含 SAP 知识的文档 → 搜索 'WBS 结构' → 返回相关内容",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F011",
+      "name": "意图识别与参数提取",
+      "priority": 11,
+      "phase": "Phase 2 - AI 对话与 RAG",
+      "description": "识别用户意图 (报表生成、数据分析、数据变更等)，提取参数",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/chat/intent.service.ts",
+        "apps/backend/src/modules/chat/planner.service.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [
+        "packages/types/src/intent.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F011-B1",
+            "description": "识别 '生成报表' 意图为 REPORT_TEMPLATE_RUN",
+            "passed": false
+          },
+          {
+            "id": "F011-B2",
+            "description": "提取参数: company_code, period, profit_center",
+            "passed": false
+          },
+          {
+            "id": "F011-B3",
+            "description": "缺失参数时返回补充提示",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F011-I1",
+            "description": "用户: '生成1月报表' → 意图识别 → 参数补全 → 确认卡片",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F012",
+      "name": "PII 检测与数据脱敏",
+      "priority": 12,
+      "phase": "Phase 3 - 数据安全网关",
+      "description": "检测敏感信息 (客户名、金额、手机号等)，替换为占位符",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/security/pii-detector.service.ts",
+        "apps/backend/src/modules/security/sanitizer.service.ts",
+        "apps/backend/src/modules/security/security.module.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F012-B1",
+            "description": "检测客户名 '华为' → 替换为 [CLIENT_001]",
+            "passed": false
+          },
+          {
+            "id": "F012-B2",
+            "description": "检测金额 '500万' → 替换为 [AMOUNT_001]",
+            "passed": false
+          },
+          {
+            "id": "F012-B3",
+            "description": "脱敏映射存储到 Redis (TTL 1小时)",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F012-I1",
+            "description": "用户输入敏感信息 → 脱敏 → 发送 LLM → Redis 查询到映射",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F013",
+      "name": "数据还原引擎",
+      "priority": 13,
+      "phase": "Phase 3 - 数据安全网关",
+      "description": "从 Redis 映射表还原占位符为真实数据",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/security/restorer.service.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F013-B1",
+            "description": "还原 [CLIENT_001] → '华为'",
+            "passed": false
+          },
+          {
+            "id": "F013-B2",
+            "description": "还原 [AMOUNT_001] → '5000000'",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F013-I1",
+            "description": "LLM 返回占位符 → 还原 → 用户看到真实数据",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F014",
+      "name": "Action 执行引擎",
+      "priority": 14,
+      "phase": "Phase 4 - Action 执行",
+      "description": "实现统一 Action 执行引擎，action_id + payload 模式",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/action/action.controller.ts",
+        "apps/backend/src/modules/action/action.service.ts",
+        "apps/backend/src/modules/action/executor.service.ts",
+        "apps/backend/src/modules/action/validator.service.ts",
+        "apps/backend/src/modules/action/action.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/components/chat/action-confirm-card.tsx"
+      ],
+      "shared_files": [
+        "packages/types/src/action.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F014-B1",
+            "description": "POST /api/actions/execute 执行 Action 成功",
+            "passed": false
+          },
+          {
+            "id": "F014-B2",
+            "description": "参数校验失败返回 400",
+            "passed": false
+          },
+          {
+            "id": "F014-B3",
+            "description": "记录 ActionExecution 到数据库",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F014-F1",
+            "description": "显示 Action 确认卡片",
+            "passed": false
+          },
+          {
+            "id": "F014-F2",
+            "description": "点击确认执行 Action",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F014-I1",
+            "description": "意图识别 → 生成 Action → 用户确认 → 执行 → 结果显示",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F015",
+      "name": "SAP 集成 - ABAP Function 调用",
+      "priority": 15,
+      "phase": "Phase 4 - Action 执行",
+      "description": "实现 SAP ABAP Function 调用，封装 Z_OLORA_EXECUTE_ACTION",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/sap/sap.service.ts",
+        "apps/backend/src/modules/sap/abap.service.ts",
+        "apps/backend/src/modules/sap/sap.module.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F015-B1",
+            "description": "调用 ABAP Function 成功返回结果",
+            "passed": false
+          },
+          {
+            "id": "F015-B2",
+            "description": "SAP 连接失败返回错误",
+            "passed": false
+          },
+          {
+            "id": "F015-B3",
+            "description": "重试机制测试 (最多3次)",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F015-I1",
+            "description": "Action 执行 → 调用 SAP → 返回结果 → 显示在对话",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F016",
+      "name": "权限校验 (SAP 授权检查)",
+      "priority": 16,
+      "phase": "Phase 4 - Action 执行",
+      "description": "执行 Action 前检查用户是否有 SAP 权限",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/action/permission.service.ts"
+      ],
+      "frontend_files": [],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F016-B1",
+            "description": "有权限用户执行 Action 成功",
+            "passed": false
+          },
+          {
+            "id": "F016-B2",
+            "description": "无权限用户返回 403 Forbidden",
+            "passed": false
+          },
+          {
+            "id": "F016-B3",
+            "description": "返回缺失的权限列表",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F016-I1",
+            "description": "无权限用户尝试执行 → 显示权限不足提示",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F017",
+      "name": "审计日志",
+      "priority": 17,
+      "phase": "Phase 4 - Action 执行",
+      "description": "记录所有操作到 AuditLog 表，包含用户、时间、Action、参数、结果",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/audit/audit.service.ts",
+        "apps/backend/src/modules/audit/audit.controller.ts",
+        "apps/backend/src/modules/audit/audit.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(dashboard)/audit/page.tsx",
+        "apps/web/src/components/audit/audit-log-table.tsx"
+      ],
+      "shared_files": [
+        "packages/types/src/audit.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F017-B1",
+            "description": "Action 执行后自动记录审计日志",
+            "passed": false
+          },
+          {
+            "id": "F017-B2",
+            "description": "GET /api/audit/logs 查询审计日志",
+            "passed": false
+          },
+          {
+            "id": "F017-B3",
+            "description": "按用户/时间/Action 过滤审计日志",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F017-F1",
+            "description": "审计日志页面显示所有操作记录",
+            "passed": false
+          },
+          {
+            "id": "F017-F2",
+            "description": "点击日志查看详细信息",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F017-I1",
+            "description": "执行 Action → 审计日志记录 → 前端查询显示",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F018",
+      "name": "报表模板管理",
+      "priority": 18,
+      "phase": "Phase 5 - 报表与 BI",
+      "description": "创建、编辑、删除报表模板，定义字段和口径",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/template/template.controller.ts",
+        "apps/backend/src/modules/template/template.service.ts",
+        "apps/backend/src/modules/template/template.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(dashboard)/templates/page.tsx",
+        "apps/web/src/components/template/template-editor.tsx"
+      ],
+      "shared_files": [
+        "packages/types/src/template.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F018-B1",
+            "description": "POST /api/templates 创建模板成功",
+            "passed": false
+          },
+          {
+            "id": "F018-B2",
+            "description": "GET /api/templates 列出所有模板",
+            "passed": false
+          },
+          {
+            "id": "F018-B3",
+            "description": "PUT /api/templates/:id 更新模板",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F018-F1",
+            "description": "创建新模板，定义字段",
+            "passed": false
+          },
+          {
+            "id": "F018-F2",
+            "description": "编辑模板，保存成功",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F018-I1",
+            "description": "创建模板 → 保存 → 列表显示 → 编辑",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F019",
+      "name": "报表生成与下载",
+      "priority": 19,
+      "phase": "Phase 5 - 报表与 BI",
+      "description": "根据模板生成报表，导出为 Excel/CSV",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/template/data-fetcher.service.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/components/template/report-preview.tsx"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F019-B1",
+            "description": "POST /api/templates/:id/execute 生成报表",
+            "passed": false
+          },
+          {
+            "id": "F019-B2",
+            "description": "报表数据正确 (从 SAP 取数)",
+            "passed": false
+          },
+          {
+            "id": "F019-B3",
+            "description": "导出 Excel 文件成功",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F019-F1",
+            "description": "选择模板，填写参数，生成报表",
+            "passed": false
+          },
+          {
+            "id": "F019-F2",
+            "description": "预览报表数据",
+            "passed": false
+          },
+          {
+            "id": "F019-F3",
+            "description": "下载 Excel 文件",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F019-I1",
+            "description": "通过对话生成报表 → 显示预览 → 下载",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F020",
+      "name": "接口订阅管理 (企业级)",
+      "priority": 20,
+      "phase": "Phase 6 - 接口管理",
+      "description": "管理企业租户，订阅 Action，控制功能解锁",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/interface/tenant.controller.ts",
+        "apps/backend/src/modules/interface/tenant.service.ts",
+        "apps/backend/src/modules/interface/subscription.service.ts",
+        "apps/backend/src/modules/interface/interface.module.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(admin)/interface/tenants/page.tsx",
+        "apps/web/src/components/interface/tenant-manager.tsx"
+      ],
+      "shared_files": [
+        "packages/types/src/tenant.types.ts"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F020-B1",
+            "description": "POST /api/interface/tenants 创建租户",
+            "passed": false
+          },
+          {
+            "id": "F020-B2",
+            "description": "POST /api/interface/subscriptions 订阅 Action",
+            "passed": false
+          },
+          {
+            "id": "F020-B3",
+            "description": "未订阅 Action 执行返回 403",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F020-F1",
+            "description": "创建租户，选择订阅级别",
+            "passed": false
+          },
+          {
+            "id": "F020-F2",
+            "description": "管理租户订阅的 Action",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F020-I1",
+            "description": "创建租户 → 订阅 Action → 执行成功",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F021",
+      "name": "字段规则与扩展字段",
+      "priority": 21,
+      "phase": "Phase 6 - 接口管理",
+      "description": "按租户定制字段必填、校验规则、扩展字段",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/modules/interface/field-rule.service.ts",
+        "apps/backend/src/modules/interface/extension-field.service.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/app/(admin)/interface/field-rules/page.tsx",
+        "apps/web/src/components/interface/field-rule-editor.tsx"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F021-B1",
+            "description": "设置字段必填规则",
+            "passed": false
+          },
+          {
+            "id": "F021-B2",
+            "description": "添加扩展字段 (最多20个)",
+            "passed": false
+          },
+          {
+            "id": "F021-B3",
+            "description": "扩展字段包含在 Action payload",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F021-F1",
+            "description": "配置字段规则",
+            "passed": false
+          },
+          {
+            "id": "F021-F2",
+            "description": "添加扩展字段",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F021-I1",
+            "description": "配置规则 → 执行 Action → 规则生效",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F022",
+      "name": "UI 主题系统 (深色模式)",
+      "priority": 22,
+      "phase": "Phase 7 - 前端优化",
+      "description": "实现深色/浅色主题切换，玻璃拟态效果",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [
+        "apps/web/src/components/ui/theme-provider.tsx",
+        "apps/web/src/components/ui/theme-toggle.tsx",
+        "apps/web/tailwind.config.ts"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F022-F1",
+            "description": "切换主题，颜色变化正确",
+            "passed": false
+          },
+          {
+            "id": "F022-F2",
+            "description": "主题偏好保存到 localStorage",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F022-I1",
+            "description": "切换主题 → 刷新页面 → 主题保持",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F023",
+      "name": "动画与微交互 (Framer Motion)",
+      "priority": 23,
+      "phase": "Phase 7 - 前端优化",
+      "description": "添加页面过渡、消息气泡动画、按钮悬浮效果",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [
+        "apps/web/src/components/chat/message-bubble.tsx",
+        "apps/web/src/components/ui/animated-button.tsx"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F023-F1",
+            "description": "消息发送后有淡入动画",
+            "passed": false
+          },
+          {
+            "id": "F023-F2",
+            "description": "按钮悬浮有缩放效果",
+            "passed": false
+          }
+        ],
+        "integration_tests": []
+      }
+    },
+    {
+      "id": "F024",
+      "name": "响应式布局 (移动端适配)",
+      "priority": 24,
+      "phase": "Phase 7 - 前端优化",
+      "description": "优化移动端显示，侧边栏折叠，触摸优化",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [
+        "apps/web/src/app/layout.tsx",
+        "apps/web/src/components/layout/sidebar.tsx"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F024-F1",
+            "description": "移动端打开，侧边栏自动折叠",
+            "passed": false
+          },
+          {
+            "id": "F024-F2",
+            "description": "触摸滑动侧边栏打开/关闭",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F024-I1",
+            "description": "在手机浏览器测试所有页面布局",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F025",
+      "name": "数据可视化图表 (Recharts)",
+      "priority": 25,
+      "phase": "Phase 7 - 前端优化",
+      "description": "实现图表组件，显示报表数据",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [
+        "apps/web/src/components/charts/bar-chart.tsx",
+        "apps/web/src/components/charts/line-chart.tsx",
+        "apps/web/src/components/charts/pie-chart.tsx"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F025-F1",
+            "description": "柱状图显示正确",
+            "passed": false
+          },
+          {
+            "id": "F025-F2",
+            "description": "折线图交互正常 (hover 显示数据)",
+            "passed": false
+          }
+        ],
+        "integration_tests": []
+      }
+    },
+    {
+      "id": "F026",
+      "name": "错误处理与提示",
+      "priority": 26,
+      "phase": "Phase 8 - 完善与优化",
+      "description": "全局错误处理，友好的错误提示 (Toast)",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/common/filters/http-exception.filter.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/components/ui/toast.tsx",
+        "apps/web/src/lib/error-handler.ts"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F026-B1",
+            "description": "404 错误返回友好提示",
+            "passed": false
+          },
+          {
+            "id": "F026-B2",
+            "description": "500 错误记录日志",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F026-F1",
+            "description": "API 错误显示 Toast 提示",
+            "passed": false
+          },
+          {
+            "id": "F026-F2",
+            "description": "网络断开显示离线提示",
+            "passed": false
+          }
+        ],
+        "integration_tests": []
+      }
+    },
+    {
+      "id": "F027",
+      "name": "性能优化 (代码分割、懒加载)",
+      "priority": 27,
+      "phase": "Phase 8 - 完善与优化",
+      "description": "Next.js 动态导入，Lighthouse 性能评分 > 90",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [
+        "apps/web/next.config.js"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F027-F1",
+            "description": "首页加载时间 < 2s",
+            "passed": false
+          },
+          {
+            "id": "F027-F2",
+            "description": "Lighthouse 性能评分 > 90",
+            "passed": false
+          }
+        ],
+        "integration_tests": []
+      }
+    },
+    {
+      "id": "F028",
+      "name": "国际化 (i18n)",
+      "priority": 28,
+      "phase": "Phase 8 - 完善与优化",
+      "description": "支持中文/英文切换",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [
+        "apps/web/src/lib/i18n.ts",
+        "apps/web/src/locales/zh-CN.json",
+        "apps/web/src/locales/en-US.json"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [
+          {
+            "id": "F028-F1",
+            "description": "切换语言，文本更新正确",
+            "passed": false
+          },
+          {
+            "id": "F028-F2",
+            "description": "语言偏好保存",
+            "passed": false
+          }
+        ],
+        "integration_tests": []
+      }
+    },
+    {
+      "id": "F029",
+      "name": "部署配置 (Docker)",
+      "priority": 29,
+      "phase": "Phase 9 - 部署",
+      "description": "创建生产环境 Dockerfile，docker-compose.prod.yml",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/Dockerfile"
+      ],
+      "frontend_files": [
+        "apps/web/Dockerfile"
+      ],
+      "shared_files": [
+        "docker-compose.prod.yml"
+      ],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F029-B1",
+            "description": "Docker 构建成功",
+            "passed": false
+          },
+          {
+            "id": "F029-B2",
+            "description": "生产环境启动成功",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F029-F1",
+            "description": "Docker 构建成功",
+            "passed": false
+          }
+        ],
+        "integration_tests": [
+          {
+            "id": "F029-I1",
+            "description": "docker-compose up -d 启动所有服务",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F030",
+      "name": "CI/CD 流水线 (GitHub Actions)",
+      "priority": 30,
+      "phase": "Phase 9 - 部署",
+      "description": "自动化测试、构建、部署",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [],
+      "shared_files": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/deploy.yml"
+      ],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F030-I1",
+            "description": "Push 到 main 触发 CI 流水线",
+            "passed": false
+          },
+          {
+            "id": "F030-I2",
+            "description": "测试通过后自动部署",
+            "passed": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "F031",
+      "name": "监控与日志 (可选)",
+      "priority": 31,
+      "phase": "Phase 9 - 部署",
+      "description": "集成 Sentry 错误监控，日志聚合",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [
+        "apps/backend/src/common/interceptors/logging.interceptor.ts"
+      ],
+      "frontend_files": [
+        "apps/web/src/lib/sentry.ts"
+      ],
+      "shared_files": [],
+      "test_steps": {
+        "backend_tests": [
+          {
+            "id": "F031-B1",
+            "description": "错误自动上报 Sentry",
+            "passed": false
+          }
+        ],
+        "frontend_tests": [
+          {
+            "id": "F031-F1",
+            "description": "前端错误上报 Sentry",
+            "passed": false
+          }
+        ],
+        "integration_tests": []
+      }
+    },
+    {
+      "id": "F032",
+      "name": "文档完善",
+      "priority": 32,
+      "phase": "Phase 9 - 部署",
+      "description": "完善 README、API 文档、用户指南",
+      "implemented": false,
+      "implementation_notes": "",
+      "implemented_at": null,
+      "backend_files": [],
+      "frontend_files": [],
+      "shared_files": [
+        "README.md",
+        "docs/API.md",
+        "docs/USER_GUIDE.md",
+        "docs/ARCHITECTURE.md"
+      ],
+      "test_steps": {
+        "backend_tests": [],
+        "frontend_tests": [],
+        "integration_tests": [
+          {
+            "id": "F032-I1",
+            "description": "新用户按文档可成功部署",
+            "passed": false
+          }
+        ]
+      }
+    }
+  ]
+}

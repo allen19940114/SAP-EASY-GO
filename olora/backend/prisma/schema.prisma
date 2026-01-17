@@ -1,0 +1,353 @@
+// OLORA (SAP AI AGENT) Database Schema
+// Generated: 2026-01-17
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// 用户与认证 (User & Authentication)
+// ========================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hash
+  name      String
+  role      String   @default("user") // user | admin
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sapBindings    UserSapBinding[]
+  chatSessions   ChatSession[]
+  documents      KnowledgeDocument[]
+  auditLogs      AuditLog[]
+  actionExecutions ActionExecution[]
+
+  @@map("users")
+}
+
+model UserSapBinding {
+  id            String   @id @default(uuid())
+  userId        String
+  sapUsername   String
+  companyCode   String?
+  plant         String?
+  profitCenter  String?
+  costCenter    String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sapUsername])
+  @@map("user_sap_bindings")
+}
+
+// ========================================
+// 对话与知识库 (Chat & Knowledge Base)
+// ========================================
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String?
+  status    String   @default("active") // active | archived | deleted
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+  actions  ActionExecution[]
+
+  @@index([userId, status])
+  @@map("chat_sessions")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  sessionId String
+  role      String   // user | assistant | system
+  content   String   @db.Text
+  metadata  Json?    // Citations, action_id, etc.
+  createdAt DateTime @default(now())
+
+  // Relations
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+  @@map("messages")
+}
+
+model KnowledgeDocument {
+  id          String   @id @default(uuid())
+  userId      String
+  filename    String
+  filePath    String
+  mimeType    String
+  fileSize    Int
+  category    String?  // workflow | field_mapping | sop | template
+  tags        String[] // Array of tags
+  status      String   @default("uploaded") // uploaded | processing | processed | failed
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks KnowledgeChunk[]
+
+  @@index([userId, status])
+  @@index([category])
+  @@map("knowledge_documents")
+}
+
+model KnowledgeChunk {
+  id         String   @id @default(uuid())
+  documentId String
+  chunkIndex Int
+  content    String   @db.Text
+  vectorId   String?  // ID in Qdrant vector database
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  // Relations
+  document KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, chunkIndex])
+  @@index([documentId])
+  @@map("knowledge_chunks")
+}
+
+// ========================================
+// Action 执行引擎 (Action Execution Engine)
+// ========================================
+
+model Action {
+  id             String   @id // e.g., "RPT_TEMPLATE_RUN"
+  name           String
+  category       String   // report | analysis | change | query
+  description    String   @db.Text
+  requiredFields String[] // JSON array of required field names
+  optionalFields String[] // JSON array of optional field names
+  sapFunction    String   // ABAP Function name (e.g., Z_OLORA_EXECUTE_ACTION)
+  permissions    String[] // Required SAP permissions
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  executions ActionExecution[]
+  templates  ActionTemplate[]
+
+  @@map("actions")
+}
+
+model ActionExecution {
+  id            String   @id @default(uuid())
+  actionId      String
+  sessionId     String
+  userId        String
+  status        String   @default("pending") // pending | running | completed | failed
+  inputPayload  Json     // Sanitized input data
+  outputData    Json?
+  errorMessage  String?  @db.Text
+  sapObjectId   String?  // e.g., Project ID, WBS ID
+  executionTime Int?     // Milliseconds
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+
+  // Relations
+  action  Action      @relation(fields: [actionId], references: [id])
+  session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User        @relation(fields: [userId], references: [id])
+
+  @@index([userId, status])
+  @@index([actionId, status])
+  @@index([sessionId])
+  @@map("action_executions")
+}
+
+model ActionTemplate {
+  id          String   @id @default(uuid())
+  actionId    String
+  name        String
+  description String   @db.Text
+  template    Json     // Template structure
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  action Action @relation(fields: [actionId], references: [id])
+
+  @@map("action_templates")
+}
+
+// ========================================
+// 接口管理 (Interface Management)
+// ========================================
+
+model Tenant {
+  id              String   @id @default(uuid())
+  name            String
+  subscriptionLevel String @default("basic") // basic | pro | enterprise
+  isActive        Boolean  @default(true)
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  subscriptions InterfaceSubscription[]
+  fieldRules    InterfaceFieldRule[]
+  extensionFields ExtensionField[]
+
+  @@map("tenants")
+}
+
+model InterfaceSubscription {
+  id          String   @id @default(uuid())
+  tenantId    String
+  actionId    String
+  isEnabled   Boolean  @default(true)
+  quotaLimit  Int?     // Monthly quota
+  quotaUsed   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, actionId])
+  @@map("interface_subscriptions")
+}
+
+model InterfaceFieldRule {
+  id          String   @id @default(uuid())
+  tenantId    String
+  actionId    String
+  fieldName   String
+  isRequired  Boolean  @default(false)
+  isReadOnly  Boolean  @default(false)
+  isHidden    Boolean  @default(false)
+  defaultValue String?
+  validation  Json?    // Validation rules (regex, enum, range, etc.)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, actionId, fieldName])
+  @@map("interface_field_rules")
+}
+
+model ExtensionField {
+  id          String   @id @default(uuid())
+  tenantId    String
+  actionId    String
+  fieldName   String
+  fieldType   String   // text | number | date | enum
+  description String?
+  isRequired  Boolean  @default(false)
+  validation  Json?
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, actionId, fieldName])
+  @@map("extension_fields")
+}
+
+// ========================================
+// 报表模板 (Report Templates)
+// ========================================
+
+model ReportTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String   @db.Text
+  category    String   // financial | operational | custom
+  template    Json     // Template structure
+  fields      Json     // Field definitions
+  isPublic    Boolean  @default(false)
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  executions ReportExecution[]
+
+  @@map("report_templates")
+}
+
+model ReportExecution {
+  id          String   @id @default(uuid())
+  templateId  String
+  userId      String
+  parameters  Json     // Input parameters
+  outputFile  String?  // File path or URL
+  status      String   @default("pending") // pending | running | completed | failed
+  errorMessage String? @db.Text
+  executionTime Int?   // Milliseconds
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+
+  // Relations
+  template ReportTemplate @relation(fields: [templateId], references: [id])
+
+  @@index([templateId, status])
+  @@map("report_executions")
+}
+
+// ========================================
+// 审计与安全 (Audit & Security)
+// ========================================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String
+  action      String   // Action type (e.g., "user.login", "action.execute")
+  resource    String?  // Resource type (e.g., "project", "wbs")
+  resourceId  String?  // Resource ID
+  oldValue    Json?    // Before change
+  newValue    Json?    // After change
+  ipAddress   String?
+  userAgent   String?  @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@index([resource, resourceId])
+  @@map("audit_logs")
+}
+
+model SensitiveDataMapping {
+  id        String   @id @default(uuid())
+  sessionId String
+  mappings  Json     // Key-value pairs of placeholders to real values
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([expiresAt])
+  @@map("sensitive_data_mappings")
+}
