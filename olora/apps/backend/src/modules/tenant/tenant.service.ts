@@ -17,7 +17,6 @@ export class TenantService {
         name: dto.name,
         code: dto.code,
         subscriptionTier: dto.tier,
-        status: 'active',
       },
     });
   }
@@ -26,13 +25,6 @@ export class TenantService {
     return this.prisma.tenant.findMany({
       include: {
         subscriptions: true,
-        users: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-          },
-        },
       },
     });
   }
@@ -42,7 +34,6 @@ export class TenantService {
       data: {
         tenantId,
         actionId,
-        status: 'active',
       },
     });
   }
@@ -56,9 +47,8 @@ export class TenantService {
       throw new Error('Subscription not found');
     }
 
-    return this.prisma.interfaceSubscription.update({
+    return this.prisma.interfaceSubscription.delete({
       where: { id: subscription.id },
-      data: { status: 'inactive' },
     });
   }
 
@@ -67,7 +57,6 @@ export class TenantService {
       where: {
         tenantId,
         actionId,
-        status: 'active',
       },
     });
 
