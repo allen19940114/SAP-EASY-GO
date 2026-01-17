@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { LLMModule } from './modules/llm/llm.module';
 import { WebSocketModule } from './modules/websocket/websocket.module';
+import { RAGModule } from './modules/rag/rag.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WebSocketModule } from './modules/websocket/websocket.module';
     ChatModule,
     LLMModule,
     WebSocketModule,
+    RAGModule,
   ],
   controllers: [AppController],
   providers: [AppService],
