@@ -1,7 +1,5 @@
 'use client';
 
-import Link from 'next/link';
-
 export default function HomePage() {
   return (
     <div style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto', background: 'white', minHeight: '100vh' }}>
@@ -11,32 +9,6 @@ export default function HomePage() {
       <p style={{ fontSize: '20px', color: '#666', marginBottom: '40px' }}>
         企业级 AI Agent for SAP - 智能对话、知识库管理、数据安全网关
       </p>
-
-      <div style={{ marginBottom: '30px' }}>
-        <Link href="/login" style={{
-          display: 'inline-block',
-          padding: '12px 24px',
-          background: '#1890ff',
-          color: 'white',
-          borderRadius: '4px',
-          marginRight: '10px',
-          fontWeight: 'bold',
-          cursor: 'pointer'
-        }}>
-          登录
-        </Link>
-        <Link href="/register" style={{
-          display: 'inline-block',
-          padding: '12px 24px',
-          background: '#52c41a',
-          color: 'white',
-          borderRadius: '4px',
-          fontWeight: 'bold',
-          cursor: 'pointer'
-        }}>
-          注册
-        </Link>
-      </div>
 
       <div
         style={{
