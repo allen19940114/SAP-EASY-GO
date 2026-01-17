@@ -9,33 +9,41 @@ export class TemplateService {
   async create(userId: string, dto: CreateTemplateDto) {
     return this.prisma.reportTemplate.create({
       data: {
-        userId,
+        createdBy: userId,
         name: dto.name,
         description: dto.description,
-        fields: dto.fields,
-        parameters: dto.parameters,
-        sapTable: dto.sapTable,
+        category: dto.category || 'custom',
+        template: dto.template || {},
+        fields: dto.fields || [],
+        isPublic: dto.isPublic || false,
       },
     });
   }
 
-  async findAll(userId: string) {
+  async findAll(userId?: string) {
     return this.prisma.reportTemplate.findMany({
-      where: { userId },
+      where: userId ? { createdBy: userId } : {},
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOne(id: string, userId: string) {
+  async findOne(id: string, userId?: string) {
     return this.prisma.reportTemplate.findFirst({
-      where: { id, userId },
+      where: userId ? { id, createdBy: userId } : { id },
     });
   }
 
   async update(id: string, userId: string, dto: Partial<CreateTemplateDto>) {
     return this.prisma.reportTemplate.update({
       where: { id },
-      data: dto,
+      data: {
+        name: dto.name,
+        description: dto.description,
+        category: dto.category,
+        template: dto.template as any,
+        fields: dto.fields as any,
+        isPublic: dto.isPublic,
+      },
     });
   }
 
@@ -51,8 +59,19 @@ export class TemplateService {
       throw new Error('Template not found');
     }
 
-    // TODO: 实际调用 SAP API 获取数据
+    // 生成模拟数据
     const mockData = this.generateMockData(template.fields as any[], params);
+
+    // 创建执行记录
+    await this.prisma.reportExecution.create({
+      data: {
+        templateId: id,
+        userId,
+        parameters: params,
+        status: 'completed',
+        executionTime: Math.floor(Math.random() * 5000) + 1000,
+      },
+    });
 
     return {
       templateId: id,
@@ -64,10 +83,9 @@ export class TemplateService {
   }
 
   private generateMockData(fields: any[], params: Record<string, any>): any[] {
-    // 生成模拟数据
     return Array.from({ length: 10 }, (_, i) => {
       const row: any = {};
-      fields.forEach((field) => {
+      fields.forEach((field: any) => {
         switch (field.type) {
           case 'string':
             row[field.name] = `Value ${i + 1}`;

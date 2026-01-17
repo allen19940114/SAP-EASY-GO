@@ -3,11 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './shared/prisma/prisma.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { ChatModule } from './modules/chat/chat.module';
-import { LLMModule } from './modules/llm/llm.module';
-import { WebSocketModule } from './modules/websocket/websocket.module';
-import { RAGModule } from './modules/rag/rag.module';
 
 @Module({
   imports: [
@@ -16,11 +11,6 @@ import { RAGModule } from './modules/rag/rag.module';
       envFilePath: ['.env.local', '.env'],
     }),
     PrismaModule,
-    AuthModule,
-    ChatModule,
-    LLMModule,
-    WebSocketModule,
-    RAGModule,
   ],
   controllers: [AppController],
   providers: [AppService],
