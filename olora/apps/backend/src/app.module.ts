@@ -6,6 +6,7 @@ import { PrismaModule } from './shared/prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { LLMModule } from './modules/llm/llm.module';
+import { WebSocketModule } from './modules/websocket/websocket.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LLMModule } from './modules/llm/llm.module';
     AuthModule,
     ChatModule,
     LLMModule,
+    WebSocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
